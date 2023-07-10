@@ -121,7 +121,7 @@ namespace TestMVC.Controllers
 				_db.SaveChanges();
 				return StatusCode(200);
 			}
-            return PartialView(founder);
+            return PartialView(editedFounder);
         }
 
         private bool Validate<TModel>(TModel model)

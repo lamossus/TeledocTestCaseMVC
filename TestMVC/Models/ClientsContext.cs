@@ -12,7 +12,7 @@ namespace TestMVC.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=(localdb)\TeledocTestCase;Database=TeledocClientsDb;Trusted_Connection=True");
+            optionsBuilder.UseSqlServer(@"Server=(LocalDB)\MSSQLLocalDB;Database=TeledocClientsDb;Trusted_Connection=True");
         }
 
         public override int SaveChanges()
