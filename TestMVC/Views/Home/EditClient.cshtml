@@ -1,0 +1,29 @@
+﻿@using TestMVC.Util
+@model Client
+
+<tr id="client-row-edit-@Model.ClientId" class="client-@Model.ClientId d-none">
+    <td>
+        @Html.TextBoxFor(m => m.Inn, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Inn, null, new { @class = "form-text text-muted" })
+    </td>
+    <td>
+        @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Name, null, new { @class = "form-text text-muted" })
+    </td>
+    <td>
+        @Html.DropDownListFor(m => m.Type,
+                new SelectList(EnumHelper.GetDisplayNames<Client.ClientType>().Select((v, i) => new { Value = i, Text = v }),
+                "Value",
+                "Text"),
+                new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Type, null, new { @class = "form-text text-muted" })
+    </td>
+    <td>@Html.DisplayFor(m => m.AdditionDate)</td>
+    <td>@Html.DisplayFor(m => m.EditDate)</td>
+    <td>
+        <button type="button" class="btn btn-success btn-square" onclick="editClient(@Model.ClientId)">✓</button>
+    </td>
+    <td>
+        <button type="button" class="btn btn-danger btn-square" onclick='toggleEdit(@Model.ClientId, "client")'>X</button>
+    </td>
+</tr>

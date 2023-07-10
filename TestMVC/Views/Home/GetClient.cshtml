@@ -1,0 +1,48 @@
+﻿@model Client
+
+@if (Model != null)
+{
+    <tr id="client-row-display-@Model.ClientId" class="client-@Model.ClientId">
+        <td>
+            @Html.DisplayFor(m => m.Inn)
+        </td>
+        <td>
+            @Html.DisplayFor(m => m.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(m => m.Type)
+        </td>
+        <td>@Html.DisplayFor(m => m.AdditionDate)</td>
+        <td>@Html.DisplayFor(m => m.EditDate)</td>
+        <td>
+            <button type="button" class="btn btn-light btn-square" onclick='toggleEdit(@Model.ClientId, "client")'>E</button>
+        </td>
+        <td>
+            <button type="button" class="btn btn-danger btn-square" onclick="deleteClient(@Model.ClientId)">-</button>
+        </td>
+    </tr>
+    @await Html.PartialAsync("EditClient", @Model)
+    @if (Model.Type == Client.ClientType.UL)
+    {
+        <tr class="client-@Model.ClientId">
+            <td colspan="100" style="padding:0">
+                <table class="table table-dark" style="margin:0">
+                    <thead>
+                        <tr>
+                            <th style="width:12%">ИНН</th>
+                            <th style="width:39%">ФИО</th>
+                            <th style="width:15%">Дата добавления</th>
+                            <th style="width:15%">Дата изменения</th>
+                            <th style="width:10%"></th>
+                            <th style="width:10%"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="client-founder-table-@Model.ClientId">
+                        @await Html.PartialAsync("GetFounders", Model.Founders)
+                        @await Html.PartialAsync("AddFounder", new Founder() { Client = Model })
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    }
+}

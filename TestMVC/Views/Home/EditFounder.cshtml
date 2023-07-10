@@ -1,0 +1,20 @@
+﻿@model Founder
+
+<tr id="founder-row-edit-@Model.FounderId" class="client-@Model.FounderId d-none">
+    <td>
+        @Html.TextBoxFor(m => m.Inn, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Inn, null, new { @class = "form-text text-muted" })
+    </td>
+    <td>
+        @Html.TextBoxFor(m => m.FullName, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.FullName, null, new { @class = "form-text text-muted" })
+    </td>
+    <td>@Html.DisplayFor(m => m.AdditionDate)</td>
+    <td>@Html.DisplayFor(m => m.EditDate)</td>
+    <td>
+        <button type="button" class="btn btn-success btn-square" onclick="editFounder(@Model.FounderId)">✓</button>
+    </td>
+    <td>
+        <button type="button" class="btn btn-danger btn-square" onclick='toggleEdit(@Model.FounderId, "founder")'>X</button>
+    </td>
+</tr>

@@ -1,0 +1,22 @@
+﻿@model Founder
+
+@if (Model != null)
+{
+    <tr id="founder-row-display-@Model.FounderId">
+        <td>
+            @Html.DisplayFor(m => m.Inn)
+        </td>
+        <td>
+            @Html.DisplayFor(m => m.FullName)
+        </td>
+        <td>@Html.DisplayFor(m => m.AdditionDate)</td>
+        <td>@Html.DisplayFor(m => m.EditDate)</td>
+        <td>
+            <button type="button" class="btn btn-light btn-square" onclick='toggleEdit(@Model.FounderId, "founder")'>E</button>
+        </td>
+        <td>
+            <button type="button" class="btn btn-danger btn-square" onclick="deleteFounder(@Model.FounderId)">-</button>
+        </td>
+    </tr>
+    @await Html.PartialAsync("EditFounder", @Model)
+}

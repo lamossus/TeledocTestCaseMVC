@@ -1,0 +1,17 @@
+﻿@model Founder
+
+<tr id="client-founder-add-@Model.Client!.ClientId">
+    <td>
+        @Html.TextBoxFor(m => m.Inn, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Inn, null, new { @class = "form-text text-muted" })
+    </td>
+    <td>
+        @Html.TextBoxFor(m => m.FullName, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.FullName, null, new { @class = "form-text text-muted" })
+    </td>
+    <td>—</td>
+    <td>—</td>
+    <td colspan="2">
+        <button type="button" class="btn btn-success btn-square" onclick="addFounder(@Model.Client!.ClientId)">✓</button>
+    </td>
+</tr>

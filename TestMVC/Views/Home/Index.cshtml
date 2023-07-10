@@ -1,0 +1,191 @@
+﻿@model IList<Client>
+@{
+    ViewData["Title"] = "Clients";
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th style="width:12%">ИНН</th>
+            <th style="width:32%">Наименование</th>
+            <th style="width:7%">Тип</th>
+            <th style="width:15%">Дата добавления</th>
+            <th style="width:15%">Дата изменения</th>
+            <th style="width:10%"></th>
+            <th style="width:10%"></th>
+        </tr>
+    </thead>
+    <tbody id="client-table">
+        @await Html.PartialAsync("GetClients")
+    </tbody>
+</table>
+
+<div id="client-input">
+    @await Html.PartialAsync("AddClient", new Client())
+</div>
+
+<script type="text/javascript">
+    function deleteClient(id) {
+        $('.field-validation-error').html('');
+        $.ajax({
+            url: '@Url.Action("DeleteClient")',
+            type: 'post',
+            data: {'id': id},
+            success: (result) => {
+                $('.client-'+id).remove();
+            }
+        })
+    }
+
+    function deleteFounder(id) {
+        $('.field-validation-error').html('');
+        $.ajax({
+            url: '@Url.Action("DeleteFounder")',
+            type: 'post',
+            data: {'id': id},
+            success: (result) => {
+                $('#founder-row-display-'+id).remove();
+                $('#founder-row-edit-'+id).remove();
+            }
+        })
+    }
+
+    function toggleEdit(id, type) {
+        $('.field-validation-error').html('');
+        $(`#${type}-row-display-${id}, #${type}-row-edit-${id}`).toggleClass("d-none");
+    }
+
+    function editClient(id) {
+        $('.field-validation-error').html('');
+        var inn = $(`#client-row-edit-${id} input#Inn`).val();
+        var name = $(`#client-row-edit-${id} input#Name`).val();
+        var type = $(`#client-row-edit-${id} select#Type`).find(':selected').val();
+
+        $.ajax({
+            url: '@Url.Action("EditClient")',
+            type: 'post',
+            data: {'clientId': id, 'inn': inn, 'name': name, 'type': type},
+            success: (result) => {
+                if ($.trim(result)) {
+                    $(`#client-row-edit-${id}`).replaceWith(result);
+                    $(`#client-row-edit-${id}`).removeClass('d-none');
+                }
+                else{
+                    $.ajax({
+                        url: '@Url.Action("GetClient")',
+                        type: 'get',
+                        data: {'id':id},
+                        success: (result) => {
+                            $(`.client-${id} :not(#client-row-display-${id})`).remove();
+                            $(`#client-row-display-${id}`).replaceWith(result);
+                        }
+                    })
+                }
+
+            }
+        })
+    }
+
+    function editFounder(id) {
+        $('.field-validation-error').html('');
+        var inn = $(`#founder-row-edit-${id} input#Inn`).val();
+        var fullName = $(`#founder-row-edit-${id} input#FullName`).val();
+
+        $.ajax({
+            url: '@Url.Action("EditFounder")',
+            type: 'post',
+            data: {'founderId': id, 'inn': inn, 'fullName': fullName},
+            success: (result) => {
+                if ($.trim(result)) {
+                    $(`#founder-row-edit-${id}`).replaceWith(result);
+                    $(`#founder-row-edit-${id}`).removeClass('d-none');
+                }
+                else{
+                    $.ajax({
+                        url: '@Url.Action("GetFounder")',
+                        type: 'get',
+                        data: {'id':id},
+                        success: (result) => {
+                            $('#founder-row-edit-'+id).remove();
+                            $('#founder-row-display-'+id).replaceWith(result);
+                        }
+                    })
+                }
+
+            }
+        })
+    }
+
+    function addClient()
+    {
+        $('.field-validation-error').html('');
+        var inn = $(`#add-client input#Inn`).val();
+        var name = $(`#add-client input#Name`).val();
+        var type = $(`#add-client select#Type`).find(':selected').val();
+
+        $.ajax({
+            url: '@Url.Action("AddClient")',
+            type: 'post',
+            data: {'inn': inn, 'name': name, 'type': type},
+            success: (result) => {
+                if (result.insertedId === undefined) {
+                    $('#client-input').html(result);
+                }
+                else {
+
+                    $('#add-client :input')
+                    .not(':button, :submit, :reset, :hidden, select')
+                    .val('')
+                    .prop('checked', false);
+
+                    $('.field-validation-error').html('');
+
+                    $.ajax({
+                        url: '@Url.Action("GetClient")',
+                        type: 'get',
+                        data: {id: result.insertedId},
+                        success: (result) => {
+                            $('#client-table').append(result);
+                        }
+                    })
+                }
+            }
+        })
+        return false;
+    }
+
+    function addFounder(id)
+    {
+        $('.field-validation-error').html('');
+        var inn = $(`#client-founder-add-${id} input#Inn`).val();
+        var fullName = $(`#client-founder-add-${id} input#FullName`).val();
+
+        $.ajax({
+            url: '@Url.Action("AddFounder")',
+            type: 'post',
+            data: {'clientId': id, 'inn': inn, 'fullName': fullName},
+            success: (result) => {
+                var founderId = result.addedFounder;
+
+                if (result.insertedId === undefined) {
+                    $(`#client-founder-add-${id}`).replaceWith(result)
+                }
+                else    {
+                    $(':input',`#client-founder-add-${id}`)
+                    .not(':button, :submit, :reset, :hidden, select')
+                    .val('')
+                    .prop('checked', false);
+
+                    $.ajax({
+                        url: '@Url.Action("GetFounder")',
+                        type: 'get',
+                        data: {'id':result.insertedId},
+                        success: (result) => {
+                        $(`#client-founder-table-${id} tr:last`).before(result);
+                        }
+                    });
+                }
+            }
+        })
+    }
+</script>
