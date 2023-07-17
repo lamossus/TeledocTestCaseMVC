@@ -20,11 +20,49 @@
     </tbody>
 </table>
 
-<div id="client-input">
-    @await Html.PartialAsync("AddClient", new Client())
-</div>
+@await Html.PartialAsync("_AddClient", new Client())
 
 <script type="text/javascript">
+    $(document).ready(() => {
+        $("#add-client-form").on("submit", (event) => {
+            event.preventDefault();
+            var url = $(this).attr("action");
+            var formData = $(this).serialize();
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: formData,
+                dataType: "json",
+                success: (response) => {
+                    if (response.success === true) {
+                        $('#add-client :input')
+                        .not(':button, :submit, :reset, :hidden, select')
+                        .val('')
+                        .prop('checked', false);
+
+                        $('.field-validation-error').html('');
+
+                        $.ajax({
+                            url: '@Url.Action("GetClient")',
+                            type: 'get',
+                            data: {id: response.insertedId},
+                            success: (response) => {
+                                $('#client-table').append(response);
+                            }
+                        });
+                    }
+                    else {
+                        foreach (var e in response.modelState.validationErrors) {
+                            console.log(e);
+                        }
+                    }
+                }
+            });
+            return false;
+        });
+    });
+
+
     function deleteClient(id) {
         $('.field-validation-error').html('');
         $.ajax({
@@ -123,16 +161,20 @@
         var name = $(`#add-client input#Name`).val();
         var type = $(`#add-client select#Type`).find(':selected').val();
 
+        if ($('#add-client-form').valid)
+            console.log('VALID');
+        else
+            console.log('INVALID');
+
         $.ajax({
             url: '@Url.Action("AddClient")',
             type: 'post',
             data: {'inn': inn, 'name': name, 'type': type},
             success: (result) => {
-                if (result.insertedId === undefined) {
-                    $('#client-input').html(result);
+                if (result.success === false) {
+                    console.log(result.errors);
                 }
                 else {
-
                     $('#add-client :input')
                     .not(':button, :submit, :reset, :hidden, select')
                     .val('')
