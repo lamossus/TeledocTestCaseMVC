@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.Metrics;
 using System.Linq.Expressions;
 using TestMVC.Models;
+using TestMVC.Util;
 
 namespace TestMVC.Controllers
 {
@@ -27,10 +28,10 @@ namespace TestMVC.Controllers
             {
                 _db.Clients.Add(client);
                 _db.SaveChanges();
-				return new JsonResult(new { insertedId = client.ClientId });
+                return new JsonResult(new { success = true, insertedId = client.ClientId });
 			}
 
-            return PartialView(client);
+            return new JsonResult(new { success = false, model = ValidationHelper.ModelStateToJsonable(ModelState) });
         }
 
         [HttpPost]
@@ -121,17 +122,13 @@ namespace TestMVC.Controllers
 				_db.SaveChanges();
 				return StatusCode(200);
 			}
-            return PartialView(founder);
+            return PartialView(editedFounder);
         }
 
         private bool Validate<TModel>(TModel model)
         {
             if (model is IValidatableObject validatableModel)
-            {
-                var validationResults = validatableModel.Validate(new ValidationContext(model));
-                foreach (var error in validationResults)
-                    ModelState.AddModelError(error.MemberNames.FirstOrDefault()!, error.ErrorMessage!);
-            }
+                validatableModel.Validate(new ValidationContext(model));
 
             return ModelState.IsValid;
         }
